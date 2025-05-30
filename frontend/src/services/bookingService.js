@@ -1,5 +1,4 @@
 import axios from 'axios';
-import keycloak from '../auth/KeycloakService';
 
 const API_URL = 'http://localhost:8081/api/bookings';
 

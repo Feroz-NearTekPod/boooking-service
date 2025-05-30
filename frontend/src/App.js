@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState} from 'react';
 import BookingForm from './components/BookingForm';
 import BookingList from './components/BookingList';
 import { getBookings } from './services/bookingService';
@@ -7,7 +7,8 @@ import { useKeycloak } from './auth/KeycloakProvider';
 
 function App() {
   const [bookings, setBookings] = useState([]);
-  const { keycloak, authenticated, login } = useKeycloak();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { keycloak, authenticated, login, logout, showTwoFactorSettings, toggleTwoFactorSettings, twoFactorEnabled, toggleTwoFactor } = useKeycloak();
 
   useEffect(() => {
     if (authenticated) {
@@ -74,15 +75,46 @@ function App() {
           </div>
 
           <div className="login-container">
-          <span className="welcome-text">
-            Welcome, {keycloak.tokenParsed?.preferred_username}
-          </span>
-            <button
-                className="btn btn-logout"
-                onClick={() => keycloak.logout({ redirectUri: window.location.origin })}
-            >
-              Logout
-            </button>
+            <div className="user-dropdown">
+              <button 
+                className="dropdown-toggle" 
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
+                Welcome, {keycloak.tokenParsed?.preferred_username}
+                <span className="dropdown-caret">▼</span>
+              </button>
+
+              {dropdownOpen && (
+                <div className="dropdown-menu show">
+                  <div className="dropdown-section">
+                    <button className="dropdown-item" onClick={toggleTwoFactorSettings}>
+                      <span className="dropdown-icon">⚙️</span> Settings
+                    </button>
+                  </div>
+                  <div className="dropdown-divider"></div>
+                  <div className="dropdown-section">
+                    <button className="dropdown-item logout-item" onClick={logout}>
+                      <span className="dropdown-icon">🚪</span> Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {showTwoFactorSettings && (
+              <div className="settings-panel">
+                <h3>Security Settings</h3>
+                <div className="setting-item">
+                  <span>Two-Factor Authentication</span>
+                  <button 
+                    className={`btn-2fa ${twoFactorEnabled ? 'btn-2fa-enabled' : ''}`}
+                    onClick={toggleTwoFactor}
+                  >
+                    {twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </header>
 
