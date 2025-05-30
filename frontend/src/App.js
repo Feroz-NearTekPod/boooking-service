@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import BookingForm from './components/BookingForm';
-import KeycloakStatus from './components/KeycloakStatus';
 import BookingList from './components/BookingList';
 import { getBookings } from './services/bookingService';
 import './styles/BookingStyles.css';
