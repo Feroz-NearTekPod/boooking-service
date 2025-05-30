@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import BookingForm from './components/BookingForm';
+import KeycloakStatus from './components/KeycloakStatus';
 import BookingList from './components/BookingList';
 import { getBookings } from './services/bookingService';
 import './styles/BookingStyles.css';
@@ -7,7 +8,7 @@ import { useKeycloak } from './auth/KeycloakProvider';
 
 function App() {
   const [bookings, setBookings] = useState([]);
-  const { keycloak, authenticated } = useKeycloak();
+  const { keycloak, authenticated, login } = useKeycloak();
 
   useEffect(() => {
     if (authenticated) {
@@ -23,7 +24,47 @@ function App() {
     setBookings(bookings.filter(b => b.id !== id));
   };
 
-  if (!authenticated) return <div>Loading...</div>;
+  if (!authenticated) {
+    return (
+      <div className="booking-container">
+        <header className="booking-header">
+          <div className="header-content">
+            <h1>Luxury Hotel Booking</h1>
+            <p>Experience comfort and elegance at its finest</p>
+          </div>
+          <div className="login-container">
+            <button className="btn btn-login" onClick={login}>
+              Login
+            </button>
+          </div>
+        </header>
+        <div className="booking-content-single">
+          <div className="booking-form-container">
+            <h2>Make a Reservation</h2>
+            <BookingForm onAdd={addBooking} />
+
+            <div className="room-section">
+              <h3>Room Highlights</h3>
+              <div className="room-highlights">
+                <div className="room-card">
+                  <h3>Deluxe Room</h3>
+                  <p>Spacious and elegant with city views.</p>
+                </div>
+                <div className="room-card">
+                  <h3>Executive Suite</h3>
+                  <p>Premium suite with separate living area.</p>
+                </div>
+                <div className="room-card">
+                  <h3>Presidential Suite</h3>
+                  <p>Our finest accommodation with butler service.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
       <div className="booking-container">
