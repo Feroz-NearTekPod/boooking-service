@@ -7,6 +7,8 @@ export const useKeycloak = () => useContext(KeycloakContext);
 
 export const KeycloakProvider = ({ children }) => {
     const [authenticated, setAuthenticated] = useState(false);
+    const [showTwoFactorSettings, setShowTwoFactorSettings] = useState(false);
+    const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
     useEffect(() => {
         // Initialize Keycloak without automatic login
@@ -19,8 +21,29 @@ export const KeycloakProvider = ({ children }) => {
         keycloak.login();
     };
 
+    const logout = () => {
+        keycloak.logout({ redirectUri: window.location.origin });
+    };
+
+    const toggleTwoFactorSettings = () => {
+        setShowTwoFactorSettings(!showTwoFactorSettings);
+    };
+
+    const toggleTwoFactor = () => {
+        setTwoFactorEnabled(!twoFactorEnabled);
+    };
+
     return (
-        <KeycloakContext.Provider value={{ keycloak, authenticated, login }}>
+        <KeycloakContext.Provider value={{
+            keycloak,
+            authenticated,
+            login,
+            logout,
+            showTwoFactorSettings,
+            toggleTwoFactorSettings,
+            twoFactorEnabled,
+            toggleTwoFactor
+        }}>
             {children}
         </KeycloakContext.Provider>
     );
