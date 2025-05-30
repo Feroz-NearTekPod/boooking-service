@@ -4,6 +4,11 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { KeycloakProvider } from './auth/KeycloakProvider';
+// Kept for compatibility but no longer does anything
+import { setupAuthInterceptors } from './services/authInterceptor';
+
+// Set up is kept for compatibility
+setupAuthInterceptors();
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

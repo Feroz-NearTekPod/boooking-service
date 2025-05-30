@@ -9,13 +9,18 @@ export const KeycloakProvider = ({ children }) => {
     const [authenticated, setAuthenticated] = useState(false);
 
     useEffect(() => {
-        keycloak.init({ onLoad: 'login-required' }).then(auth => {
+        // Initialize Keycloak without automatic login
+        keycloak.init({ onLoad: 'check-sso' }).then(auth => {
             setAuthenticated(auth);
         });
     }, []);
 
+    const login = () => {
+        keycloak.login();
+    };
+
     return (
-        <KeycloakContext.Provider value={{ keycloak, authenticated }}>
+        <KeycloakContext.Provider value={{ keycloak, authenticated, login }}>
             {children}
         </KeycloakContext.Provider>
     );

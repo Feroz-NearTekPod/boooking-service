@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { createBooking } from '../services/bookingService';
+import { useKeycloak } from '../auth/KeycloakProvider';
 
 export default function BookingForm({ onAdd }) {
+  const { authenticated, login } = useKeycloak();
   const [form, setForm] = useState({
     customerName: '',
     roomNumber: '',
     checkInDate: '',
     checkOutDate: ''
   });
+  const [error, setError] = useState('');
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -15,9 +19,24 @@ export default function BookingForm({ onAdd }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await createBooking(form);
-    onAdd(res.data);
-    setForm({ customerName: '', roomNumber: '', checkInDate: '', checkOutDate: '' });
+    setError('');
+    setShowLoginPrompt(false);
+
+    // If not authenticated, show login prompt instead of attempting API call
+    if (!authenticated) {
+      setShowLoginPrompt(true);
+      setError('Authentication required. Please login to book a room.');
+      return;
+    }
+
+    try {
+      const res = await createBooking(form);
+      onAdd(res.data);
+      setForm({ customerName: '', roomNumber: '', checkInDate: '', checkOutDate: '' });
+    } catch (err) {
+      console.error('Booking error:', err);
+      setError('An error occurred while processing your booking. Please try again.');
+    }
   };
 
   return (
@@ -77,6 +96,22 @@ export default function BookingForm({ onAdd }) {
         </div>
       </div>
 
+      {error && (
+        <div className="error-message">
+          {error}
+          {showLoginPrompt && (
+            <button 
+              className="btn btn-login-prompt" 
+              onClick={(e) => {
+                e.preventDefault();
+                login();
+              }}
+            >
+              Login Now
+            </button>
+          )}
+        </div>
+      )}
       <button className="btn btn-primary" type="submit">Book Now</button>
     </form>
   );
