@@ -30,7 +30,11 @@ export const KeycloakProvider = ({ children }) => {
     };
 
     const toggleTwoFactor = () => {
-        setTwoFactorEnabled(!twoFactorEnabled);
+        if (!twoFactorEnabled) {
+            window.location.href = 'http://localhost:8080/realms/HotelRealm/account/#/account-security/signing-in';
+        } else {
+            setTwoFactorEnabled(false);
+        }
     };
 
     return (

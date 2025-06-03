@@ -497,7 +497,7 @@
   box-shadow: 0 8px 16px rgba(0,0,0,0.15);
   width: 300px;
   padding: 1.25rem;
-  z-index: 900;
+  z-index: 1100;
   margin-top: 10px;
 }
 
