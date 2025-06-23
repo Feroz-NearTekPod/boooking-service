@@ -8,7 +8,6 @@ export const useKeycloak = () => useContext(KeycloakContext);
 export const KeycloakProvider = ({ children }) => {
     const [authenticated, setAuthenticated] = useState(false);
     const [showTwoFactorSettings, setShowTwoFactorSettings] = useState(false);
-    const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
     useEffect(() => {
         // Initialize Keycloak without automatic login
@@ -29,12 +28,8 @@ export const KeycloakProvider = ({ children }) => {
         setShowTwoFactorSettings(!showTwoFactorSettings);
     };
 
-    const toggleTwoFactor = () => {
-        if (!twoFactorEnabled) {
-            window.location.href = 'http://localhost:8080/realms/HotelRealm/account/#/account-security/signing-in';
-        } else {
-            setTwoFactorEnabled(false);
-        }
+    const openTwoFactorSettings = () => {
+        window.location.href = 'http://localhost:8080/realms/HotelRealm/account/#/account-security/signing-in';
     };
 
     return (
@@ -45,8 +40,7 @@ export const KeycloakProvider = ({ children }) => {
             logout,
             showTwoFactorSettings,
             toggleTwoFactorSettings,
-            twoFactorEnabled,
-            toggleTwoFactor
+            openTwoFactorSettings
         }}>
             {children}
         </KeycloakContext.Provider>

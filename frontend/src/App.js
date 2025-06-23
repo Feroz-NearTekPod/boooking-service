@@ -8,7 +8,7 @@ import { useKeycloak } from './auth/KeycloakProvider';
 function App() {
   const [bookings, setBookings] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { keycloak, authenticated, login, logout, showTwoFactorSettings, toggleTwoFactorSettings, twoFactorEnabled, toggleTwoFactor } = useKeycloak();
+  const { keycloak, authenticated, login, logout, showTwoFactorSettings, toggleTwoFactorSettings, openTwoFactorSettings } = useKeycloak();
 
   useEffect(() => {
     if (authenticated) {
@@ -107,10 +107,10 @@ function App() {
                 <div className="setting-item">
                   <span>Two-Factor Authentication</span>
                   <button 
-                    className={`btn-2fa ${twoFactorEnabled ? 'btn-2fa-enabled' : ''}`}
-                    onClick={toggleTwoFactor}
+                    className="btn-2fa"
+                    onClick={openTwoFactorSettings}
                   >
-                    {twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA'}
+                    Configure 2FA
                   </button>
                 </div>
               </div>
