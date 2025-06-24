@@ -15,6 +15,7 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String userId;
     private String customerName;
     private String roomNumber;
     private LocalDate checkInDate;

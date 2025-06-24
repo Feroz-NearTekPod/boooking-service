@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createBooking } from '../services/bookingService';
 import { useKeycloak } from '../auth/KeycloakProvider';
 
@@ -11,16 +11,52 @@ export default function BookingForm({ onAdd }) {
     checkOutDate: ''
   });
   const [error, setError] = useState('');
+  const [dateError, setDateError] = useState('');
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
+  // Get today's date in YYYY-MM-DD format for min date validation
+  const today = new Date().toISOString().split('T')[0];
+
+  useEffect(() => {
+    // Validate dates whenever they change
+    validateDates();
+  }, [form.checkInDate, form.checkOutDate]);
+
+  const validateDates = () => {
+    setDateError('');
+    
+    if (form.checkInDate && form.checkOutDate) {
+      const checkIn = new Date(form.checkInDate);
+      const checkOut = new Date(form.checkOutDate);
+      
+      if (checkOut <= checkIn) {
+        setDateError('Check-out date must be after check-in date');
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    
+    // Clear errors when user starts typing
+    setError('');
+    if (name === 'checkInDate' || name === 'checkOutDate') {
+      setDateError('');
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setShowLoginPrompt(false);
+
+    // Validate dates before submission
+    if (!validateDates()) {
+      return;
+    }
 
     // If not authenticated, show login prompt instead of attempting API call
     if (!authenticated) {
@@ -50,6 +86,7 @@ export default function BookingForm({ onAdd }) {
           onChange={handleChange} 
           placeholder="Enter your full name" 
           required 
+          className="form-input"
         />
       </div>
 
@@ -61,6 +98,7 @@ export default function BookingForm({ onAdd }) {
           value={form.roomNumber} 
           onChange={handleChange}
           required
+          className="form-select"
         >
           <option value="">Select a room type</option>
           <option value="101">Deluxe Room (101)</option>
@@ -79,7 +117,9 @@ export default function BookingForm({ onAdd }) {
             type="date" 
             value={form.checkInDate} 
             onChange={handleChange} 
+            min={today}
             required 
+            className="form-input date-input"
           />
         </div>
 
@@ -91,10 +131,18 @@ export default function BookingForm({ onAdd }) {
             type="date" 
             value={form.checkOutDate} 
             onChange={handleChange} 
+            min={form.checkInDate || today}
             required 
+            className="form-input date-input"
           />
         </div>
       </div>
+
+      {dateError && (
+        <div className="date-error-message">
+          {dateError}
+        </div>
+      )}
 
       {error && (
         <div className="error-message">
@@ -112,7 +160,14 @@ export default function BookingForm({ onAdd }) {
           )}
         </div>
       )}
-      <button className="btn btn-primary" type="submit">Book Now</button>
+
+      <button 
+        className="btn btn-primary" 
+        type="submit"
+        disabled={!!dateError}
+      >
+        Book Now
+      </button>
     </form>
   );
 }

@@ -25,6 +25,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public List<Booking> getBookingsByUserId(String userId) {
+        return bookingRepository.findByUserId(userId);
+    }
+
+    @Override
     public Booking getBookingById(Long id) {
         Optional<Booking> optional = bookingRepository.findById(id);
         return optional.orElse(null); // You can throw an exception here if not found
