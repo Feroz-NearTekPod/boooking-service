@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './axiosConfig';
 
 const API_URL = 'http://localhost:8081/api/bookings';
 
