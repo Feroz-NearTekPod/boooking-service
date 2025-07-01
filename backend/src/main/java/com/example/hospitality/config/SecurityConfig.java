@@ -19,16 +19,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors().and()
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeHttpRequests(authorize -> authorize
+            .securityMatcher("/api/**")
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/**").authenticated()
-                .anyRequest().permitAll()
-            )
-            .oauth2ResourceServer()
-            .jwt();
+                .anyRequest().permitAll())
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> {}));
 
         return http.build();
     }
