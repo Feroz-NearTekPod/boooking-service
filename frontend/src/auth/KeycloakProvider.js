@@ -29,7 +29,7 @@ export const KeycloakProvider = ({ children }) => {
     };
 
     const openTwoFactorSettings = () => {
-        window.location.href = 'http://localhost:8080/realms/HotelRealm/account/#/account-security/signing-in';
+        window.location.href = 'http://localhost:8080/realms/HotelRealm/account/account-security/signing-in';
     };
 
     return (
